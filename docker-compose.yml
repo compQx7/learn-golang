@@ -1,0 +1,33 @@
+version: "3"
+services:
+  learn_go:
+    build: ./
+    container_name: learn_go
+    tty: true
+    environment:
+      - DATABASE_URL=postgres://root:password@db:5432/testdb?sslmode=disable
+    volumes:
+      - type: bind
+        source: "./"
+        target: "/go/src/"
+    working_dir: /go/src/
+    networks:
+      - mynetwork
+
+  db:
+    image: postgres
+    container_name: learn_go_db
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: testdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db:/var/lib/postgresql/data
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
